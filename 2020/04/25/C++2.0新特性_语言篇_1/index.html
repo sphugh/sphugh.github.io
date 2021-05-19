@@ -1,0 +1,738 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="武汉大学12级，就职于南京测勘院交通工程事业部。擅长各项大地测量，编程，深入研究gamit，PCL，slam，TensorFlow，pytorch。此为博客一枚。"><title>C++2.0新特性_语言篇_1 | 胡少</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 5.4.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">C++2.0新特性_语言篇_1</h1><a id="logo" href="/.">胡少</a><p class="description">格物致知</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">C++2.0新特性_语言篇_1</h1><div class="post-meta">2020-04-25</div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-2"><a class="toc-link" href="#Part-1-%E6%BC%94%E8%BF%9B%E3%80%81%E7%8E%AF%E5%A2%83%E4%B8%8E%E8%B5%84%E6%BA%90"><span class="toc-number">1.</span> <span class="toc-text">Part 1 演进、环境与资源</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E6%BC%94%E8%BF%9B"><span class="toc-number">1.1.</span> <span class="toc-text">演进</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E7%8E%AF%E5%A2%83%EF%BC%88C-2-0%EF%BC%89"><span class="toc-number">1.2.</span> <span class="toc-text">环境（C++2.0）</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#%E8%B5%84%E6%BA%90"><span class="toc-number">1.3.</span> <span class="toc-text">资源</span></a><ol class="toc-child"><li class="toc-item toc-level-4"><a class="toc-link" href="#IDE"><span class="toc-number">1.3.1.</span> <span class="toc-text">IDE</span></a></li><li class="toc-item toc-level-4"><a class="toc-link" href="#%E7%BC%96%E8%AF%91%E5%99%A8"><span class="toc-number">1.3.2.</span> <span class="toc-text">编译器</span></a></li></ol></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Part2-Variadic-Templates"><span class="toc-number">2.</span> <span class="toc-text">Part2 Variadic Templates</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Part-3-Spaces-in-Template-Expression%E3%80%81nullptr-and-std%E2%80%93nullptr-t%E3%80%81Automatic-Type-Deduc"><span class="toc-number">3.</span> <span class="toc-text">Part 3. Spaces in Template Expression、nullptr and std–nullptr_t、Automatic Type Deduc</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#1-Spaces-in-Template-Expressions"><span class="toc-number">3.1.</span> <span class="toc-text">1.Spaces in Template Expressions</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#2-nullptr-and-std-nullptr-t"><span class="toc-number">3.2.</span> <span class="toc-text">2.nullptr and std::nullptr_t</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#3-Automatic-Type-Deduction-with-auto"><span class="toc-number">3.3.</span> <span class="toc-text">3.Automatic Type Deduction with auto</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Part-4-Uniform-Initialization"><span class="toc-number">4.</span> <span class="toc-text">Part 4 Uniform Initialization</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Part-5-Initializer-list%EF%BC%88%E4%B8%8A%EF%BC%89"><span class="toc-number">5.</span> <span class="toc-text">Part 5 Initializer_list（上）</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Part-6-Initializer-list%EF%BC%88%E4%B8%8B%EF%BC%89"><span class="toc-number">6.</span> <span class="toc-text">Part 6 Initializer_list（下）</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#initializer-list-lt-gt"><span class="toc-number">6.1.</span> <span class="toc-text">initializer_list&lt;&gt;</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Part-7-Explicit-for-ctors-taking-more-than-one-argument"><span class="toc-number">7.</span> <span class="toc-text">Part 7 Explicit  for ctors taking more than one argument</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Part-8-range-based-for-statement"><span class="toc-number">8.</span> <span class="toc-text">Part 8 range-based for statement</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#for-explicit"><span class="toc-number">8.1.</span> <span class="toc-text">for + explicit</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#part-9-default-amp-amp-delete"><span class="toc-number">9.</span> <span class="toc-text">part 9 &#x3D;default &amp;&amp; &#x3D;delete</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#No-COpy-and-Private-Copy"><span class="toc-number">9.1.</span> <span class="toc-text">No-COpy and Private-Copy</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#bost-nonocopyable"><span class="toc-number">9.2.</span> <span class="toc-text">bost::nonocopyable</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Part-10-Alias-Template-template-typdef"><span class="toc-number">10.</span> <span class="toc-text">Part 10 Alias Template (template typdef)</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#%E9%9A%BE%E9%81%93-using-%E5%8F%AA%E6%98%AF%E4%B8%BA%E4%BA%86%E5%B0%91%E6%89%93%E5%87%A0%E4%B8%AA%E5%AD%97%E6%AF%8D%EF%BC%9F"><span class="toc-number">10.1.</span> <span class="toc-text">难道 using 只是为了少打几个字母？</span></a></li></ol></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Part-11-template-template-parameter"><span class="toc-number">11.</span> <span class="toc-text">Part 11 template template parameter</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#Part-12-Type-Alias-noexcept-override-final"><span class="toc-number">12.</span> <span class="toc-text">Part 12 Type Alias noexcept override final</span></a><ol class="toc-child"><li class="toc-item toc-level-3"><a class="toc-link" href="#Type-Alias"><span class="toc-number">12.1.</span> <span class="toc-text">Type Alias</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#using"><span class="toc-number">12.2.</span> <span class="toc-text">using</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#noexcept"><span class="toc-number">12.3.</span> <span class="toc-text">noexcept</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#override"><span class="toc-number">12.4.</span> <span class="toc-text">override</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#final"><span class="toc-number">12.5.</span> <span class="toc-text">final</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#Part-13-Lambdas"><span class="toc-number">12.6.</span> <span class="toc-text">Part 13 Lambdas</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#mutable"><span class="toc-number">12.7.</span> <span class="toc-text">mutable</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#throwSpec"><span class="toc-number">12.8.</span> <span class="toc-text">throwSpec</span></a></li><li class="toc-item toc-level-3"><a class="toc-link" href="#retType"><span class="toc-number">12.9.</span> <span class="toc-text">retType</span></a></li></ol></li></ol></div></div><div class="post-content"><p>Part1~part12 from 侯捷老师C++系列</p>
+<span id="more"></span>
+<h2 id="Part-1-演进、环境与资源"><a href="#Part-1-演进、环境与资源" class="headerlink" title="Part 1 演进、环境与资源"></a>Part 1 演进、环境与资源</h2><p>C++2.0个人笔记（侯杰课程）</p>
+<h3 id="演进"><a href="#演进" class="headerlink" title="演进"></a>演进</h3><p>C++1.0<br>C++2.0</p>
+<h3 id="环境（C-2-0）"><a href="#环境（C-2-0）" class="headerlink" title="环境（C++2.0）"></a>环境（C++2.0）</h3><p>C++11<br>C++14</p>
+<h3 id="资源"><a href="#资源" class="headerlink" title="资源"></a>资源</h3><h4 id="IDE"><a href="#IDE" class="headerlink" title="IDE"></a>IDE</h4><p>Dev-C<br>KDevelop<br>Clion<br>VS</p>
+<h4 id="编译器"><a href="#编译器" class="headerlink" title="编译器"></a>编译器</h4><p>G++<br>MinGW</p>
+<h2 id="Part2-Variadic-Templates"><a href="#Part2-Variadic-Templates" class="headerlink" title="Part2 Variadic Templates"></a>Part2 Variadic Templates</h2><p>数量不定的模板参数</p>
+<pre class="line-numbers language-c++"><code class="language-c++">/*!
+ * Created by william on 4/25/21.
+ */
+#include <bits/stdc++.h>
+using namespace std;
+
+#include <iostream>
+void print()&#123;&#125;
+
+template <typename T,typename... Types>
+void print(const T& firstArg, const Types&... args)&#123;
+    cout<<firstArg<<endl;
+    print(args...);
+&#125;;
+int main()&#123;
+    print(7.5,"hello",bitset<16>(377),42);
+    return 0;
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><code>7.5 hello 0000000101111001 42</code></p>
+<p>递归实现打印任意参数，任意数量的参数。</p>
+<p>获取参数个数：Inside variadic templates, sizeoof…(args)yields the number of arguments</p>
+<h2 id="Part-3-Spaces-in-Template-Expression、nullptr-and-std–nullptr-t、Automatic-Type-Deduc"><a href="#Part-3-Spaces-in-Template-Expression、nullptr-and-std–nullptr-t、Automatic-Type-Deduc" class="headerlink" title="Part 3. Spaces in Template Expression、nullptr and std–nullptr_t、Automatic Type Deduc"></a>Part 3. Spaces in Template Expression、nullptr and std–nullptr_t、Automatic Type Deduc</h2><h3 id="1-Spaces-in-Template-Expressions"><a href="#1-Spaces-in-Template-Expressions" class="headerlink" title="1.Spaces in Template Expressions"></a>1.Spaces in Template Expressions</h3><pre class="line-numbers language-c++"><code class="language-c++">vector<list<int> >;  // OK in each C++ version
+verctor<list<int>>;  // OK since C++11
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<h3 id="2-nullptr-and-std-nullptr-t"><a href="#2-nullptr-and-std-nullptr-t" class="headerlink" title="2.nullptr and std::nullptr_t"></a>2.nullptr and std::nullptr_t</h3><p>C++11 lets you <code>use nullptr instead 0 or NULL</code> to specify <code>a pointer refers to no value</code>(which differs from having an undifined value). This new feature especially helps to <code>aviod mistakes that occurred when a null pointer was interpreted as an integral value</code>. For example:</p>
+<pre class="line-numbers language-c++"><code class="language-c++">void f(int);
+void f(void*);
+
+f(0);       // calls f(int)
+f(NULL);    // calls f(int) if NULL is 0, ambiguous  otherwise
+f(nullptr); // calls f(void*)
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>nullptr is a new keyword. <u>It automatically converts into each pointer</u> type but not to any integral type. It has type std::nullptr_t, defined in <cstddef> (see Section 5.8.1,page 161), so you can now even overload operations for ths case that a null pointer is passed. Note that std::nullptr_t <u>counts as a fundamental data type</u> (see Section 5.4.2, page 127).</p>
+<h3 id="3-Automatic-Type-Deduction-with-auto"><a href="#3-Automatic-Type-Deduction-with-auto" class="headerlink" title="3.Automatic Type Deduction with auto"></a>3.Automatic Type Deduction with auto</h3><p>With C++11, you can <u>declare a variable or an object without specifying its specific type</u> by using auto. For example:</p>
+<pre class="line-numbers language-c++"><code class="language-c++">auto i = 42; // i has type int
+double f();
+anto d = f()    // d has type double
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>Using auto is <u>especially useful where the type is a pretty long and/or complicated expression</u>. For example:</p>
+<pre class="line-numbers language-c++"><code class="language-c++">vector<string> v;
+
+auto pos = v.begin();   // pos has type vector<string>::iterator
+auto I = [](int x)->bool&#123;   // I has the type of a lambda
+    // ...                  // taking an int and return a bool
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="Part-4-Uniform-Initialization"><a href="#Part-4-Uniform-Initialization" class="headerlink" title="Part 4 Uniform Initialization"></a>Part 4 Uniform Initialization</h2><p>统一初始化</p>
+<p>Before C++11, programmers, especially novices, could easily become confused by the question of how to initialize a variable or an object.<br><u>Initialization could happen with parentheses, braces, and/or assignment operator</u>.</p>
+<p>(在C ++ 11之前，程序员，尤其是新手，很容易对如何初始化变量或对象的问题感到困惑。 初始化可以使用括号 “()” ，花括号 “{}” 和/或赋值运算符 “=” 进行。)</p>
+<pre class="line-numbers language-c++"><code class="language-c++">Rect r1 = &#123;3, 7, 20, 25, &area, &print&#125;;
+Rect r2 = (3, 7, 20, 25);
+int ia[6] = &#123;27, 210, 12, 47, 109, 83&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>For this reason, C++11 introduced the concept of uniform initialization, which means that for any initialization, you can use one common syntax, This syntax use braces, so the following is possible now:</p>
+<pre class="line-numbers language-c++"><code class="language-c++">int values[] &#123;1, 2, 3&#125;;
+vector<int> ``v``&#123;2, 3, 5, 7, 11, 13, 17&#125;;
+vector<string> cities &#123;``"Berlin"``, ``"New York"``&#125;;
+complex<double> c&#123;4.0, 3.0&#125;;  ``//` `相当于 c(4.0, 3.0)
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>编译器看到 {t1, t2, …, tn} 时便会做出一个 initializer_list<T>,它关联至一个 array&lt;T, n&gt;。此时有会出现两种可能：</p>
+<ul>
+<li><p>调用函数（例如：构造函数）时该 array 内的元素可被逐一传给函数；</p>
+</li>
+<li><p>但若函数参数是个 initializer_list<T>， 调用者就不能给予数个 T 参数然后以为他们会被自动转换为一个 initializer_list<T> ”整包“传入。</p>
+</li>
+</ul>
+<p>这形成一个 initializer_list<string>， 背后有个 array&lt;string, 2&gt;。调用 vector<string> ctors 时编译器找到了一个 vector<string> ctor 接受 initializer_list<T>，于是形成的initializer_list<string> 整包传入，不再进行分解。所有容器皆有函数参数类型为 initializer_list<T> 的 cvtor。</p>
+<h2 id="Part-5-Initializer-list（上）"><a href="#Part-5-Initializer-list（上）" class="headerlink" title="Part 5 Initializer_list（上）"></a>Part 5 Initializer_list（上）</h2><p>初始化程序列表会强制进行所谓的值初始化，这意味着即使基本数据类型的局部变量（通常具有未定义的初始值）也将被初始化为零（如果为指针，则为nullpre）。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">void func()
+&#123;
+  ``int i;   ``//` `i has undefined value
+  ``int j&#123;&#125;;  ``//` `j is initialized by 0 
+  
+  ``int *p;   ``//` `p has undefined value
+  ``int *q&#123;&#125;;  ``//` `q is initialized by nullptr
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>但是，请注意，使用大括号不可能缩小初始化范围（这些初始化会降低精度或修改提供的值）。例如：</p>
+<pre class="line-numbers language-c++"><code class="language-c++">int x1(5.3);    // OK, but OUCH: x1 becomes 5
+int x2 = 5.3;   // OK, but OUCH: x3 becomes 5
+int x3&#123;5.0&#125;;    // ERROR: narrowing
+int x4 = &#123;5.3&#125;;`// ERROR: narrowing
+
+char c1&#123;7&#125;;     // OK: even 7 is an int, this is not narrowing
+char c2&#123;9999&#125;;  // ERROR: narrowing (if 9999 doesn't fit into a char)
+
+std::vector<int> v1 &#123;1, 2, 4, 5&#125;;       // OK
+std::vector<int> v2 &#123;1, 2.3, 4, 5.6&#125;;   // ERROR: narrowing
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="Part-6-Initializer-list（下）"><a href="#Part-6-Initializer-list（下）" class="headerlink" title="Part 6 Initializer_list（下）"></a>Part 6 Initializer_list（下）</h2><h3 id="initializer-list-lt-gt"><a href="#initializer-list-lt-gt" class="headerlink" title="initializer_list&lt;&gt;"></a>initializer_list&lt;&gt;</h3><p>支持用户定义类型的初始化列表的概念。C++提供类模板std::initializer_list&lt;&gt;。它可以用于支持通过值列表进行初始化，也可以用于你只想处理值列表的任何其他地方。例如：</p>
+<pre class="line-numbers language-c++"><code class="language-c++">void print(std::initializer_list<int> vals)
+&#123;
+    for (auto p = vals.begin(); p!=vals.end(); ++p)
+    &#123;
+        std::cout << *p << "\n";
+    &#125;
+&#125;
+print(&#123;12, 3, 5, 7&#125;);
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>当既有特定数量的参数又有初始化器列表的构造函数时，首选带有初始化器列表的版本。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">class P
+&#123;
+public:
+    P(int a, int b)
+    &#123;
+        cout << "P(int a, int b), a=" << a << ", b=" << b << endl;
+    &#125;
+ 
+    P(initializer_list<int> initlist)
+    &#123;
+        cout << "P(initializer_list<int> initlist), values=";
+ 
+        for (const auto &i : initlist)
+        &#123;
+            cout << i << ' ';
+        &#125;
+        cout << endl;
+    &#125;
+&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">P p(77, 5);
+P q&#123;77, 5&#125;;
+P r&#123;77, 5, 42&#125;;
+P s=&#123;77, 5&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">P(int a, int b), a=77, b=5
+P(initializer_list<int> initlist), values=77 5
+P(initializer_list<int> initlist), values=77 5 42
+P(initializer_list<int> initlist), values=77 5
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<p>如果没有用于初始化列表的构造函数，则将采用两个整数的构造函数来初始化q和s，而r的初始化将无效。</p>
+<h2 id="Part-7-Explicit-for-ctors-taking-more-than-one-argument"><a href="#Part-7-Explicit-for-ctors-taking-more-than-one-argument" class="headerlink" title="Part 7 Explicit  for ctors taking more than one argument"></a>Part 7 Explicit  for ctors taking more than one argument</h2><p>概念：explicit用来针对构造函数接受一个以上实参。不允许进行隐式的调用构造函数。</p>
+<p>所以加了explicit 关键字后，如果类没有以initializer_list为参数的构造函数，则不会将initializer_list 类型的数据拆分调用其他构造函数。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">struct Complex
+&#123;
+    int real, imag;
+
+    Complex(int re, int im = 0) : real(re), imag(im)
+    &#123;
+        cout << "re=" << re << "; im=" << im << endl;
+    &#125;
+
+    Complex operator+(const Complex &x)
+    &#123;
+        cout << "Complex operator+(const Complex &x)" << endl;
+
+        return Complex(real+x.real, imag+x.imag);
+    &#125;
+&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">class P
+&#123;
+public:
+
+    explicit P(int a, int b, int c)
+    &#123;
+        cout << "explicit P(int a, int b, int c)" << endl;
+    &#125;
+&#125;;
+
+void func(const P &obj)
+&#123;
+    cout << "void func(class P &obj)" << endl;
+&#125;
+
+int main()
+&#123;
+    func(&#123;47, 11, 3&#125;);
+
+    return 0;
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="Part-8-range-based-for-statement"><a href="#Part-8-range-based-for-statement" class="headerlink" title="Part 8 range-based for statement"></a>Part 8 range-based for statement</h2><p>范式</p>
+<pre class="line-numbers language-c++"><code class="language-c++">for (decl/* 声明 */ : coll /* 容器 */)
+&#123;
+    // ...
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">for (int i : &#123;2, 4, 6, 8, 10&#125; /* initializer_list<int> */)
+&#123;
+    cout << i << endl;
+&#125;
+vector <double> vec&#123;2, 4, 6&#125;;
+
+for (auto ele : vec)
+&#123;
+    cout << elem << endl;
+&#125;
+
+for (auto &elem : vec)
+&#123;
+    elem *= 3;
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>注：<code>auto &amp;elem</code> 的使用情况</p>
+<ul>
+<li>当需要修改容器内数据时；</li>
+<li>非基础数据类型时， &amp; 避免拷贝构造，更为高效（不需要修改原数据时: const auto &amp;）</li>
+</ul>
+<h3 id="for-explicit"><a href="#for-explicit" class="headerlink" title="for + explicit"></a>for + explicit</h3><p>当在for循环中以声明的形式初始化时，不可能进行显式类型转换，因此，下面的代码不能编译。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">class C
+&#123;
+public:
+    explicit C(const string &s) // explicit(!) type conversion from strings
+    &#123; &#125;
+    // ...
+&#125;;
+
+int main()
+&#123;
+    vector<string> vs;
+
+    for (const C &elem : vs)
+    &#123;
+        // ...
+    &#125;
+
+    return 0;
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">error: invalid initialization of reference of type 'const C&' from expression of type 'std::__cxx11::basic_string<char>'
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+<h2 id="part-9-default-amp-amp-delete"><a href="#part-9-default-amp-amp-delete" class="headerlink" title="part 9 =default &amp;&amp; =delete"></a>part 9 =default &amp;&amp; =delete</h2><p>如果自定义了一个构造函数，那么编译器不会再生成任何一个default ctor。</p>
+<p>如果强加上 <code>=default</code>,就可以重新获得并使用 default ctor。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">class Zoo
+&#123;
+public:
+    Zoo(int i1, int i2) : d1(i1), d2(i2) &#123; &#125;
+    Zoo(const Zoo&) = delete ;//拷贝构造函数
+    Zoo(Zoo&&) = default;//右值 move
+    Zoo& operator=(const Zoo&) = default;//赋值
+    Zoo& operator=(Zoo&&) = delete;
+    virtual ~Zoo() &#123; &#125;
+
+private:
+    int d1;
+    int d2;
+&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p><img src="F:\william\2021\C++2.0\default&&delete_pic1.png"></p>
+<pre class="line-numbers language-c++"><code class="language-c++">class Foo
+&#123;
+public:
+    Foo(int i) : _i(i) &#123;&#125;
+    Foo() = default;
+
+    Foo(const Foo &x) : _i(x._i) &#123;&#125; 
+    // Foo(const Foo&) = default;  //  error: ‘Foo::Foo(const Foo&)’ cannot be overloaded
+   // Foo(const Foo&) = delete;    // error: ‘Foo::Foo(const Foo&)’ cannot be overloaded
+
+    Foo& operator=(const Foo &x) &#123;_i = x._i; return *this;&#125;
+    // Foo& operator=(const Foo &x) = default;  // error: ‘Foo& Foo::operator=(const Foo&)’ cannot be overloaded
+    // Foo& operator=(const Foo &x) = delete;   // error: ‘Foo& Foo::operator=(const Foo&)’ cannot be overloaded
+
+    // void func1() = default;  // error: ‘void Foo::func1()’ cannot be defaulted
+    void func2() = delete;
+
+    // ~Foo() = delete;  // 编译通过。这可能会造成使用 Foo object 时出错 =>   error: use of deleted function ‘Foo::~Foo()’
+    ~Foo() = default;
+
+private:
+    int _i;
+&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<ul>
+<li><p>需要自己写Big-Three的情况：</p>
+<p>一个类包含pointer member，就可以断定需要写；没有指针成员，则使用默认一套成员即可。</p>
+<p>Complex：没有指针，没有operator=(const complex&lt;…&gt;&amp;)</p>
+<p>string：有Big-Five</p>
+</li>
+</ul>
+<h3 id="No-COpy-and-Private-Copy"><a href="#No-COpy-and-Private-Copy" class="headerlink" title="No-COpy and Private-Copy"></a>No-COpy and Private-Copy</h3><p>![](F:\william\2021\C++2.0\9.2No-COpy and Private-Copy.png)</p>
+<h3 id="bost-nonocopyable"><a href="#bost-nonocopyable" class="headerlink" title="bost::nonocopyable"></a>bost::nonocopyable</h3><h2 id="Part-10-Alias-Template-template-typdef"><a href="#Part-10-Alias-Template-template-typdef" class="headerlink" title="Part 10 Alias Template (template typdef)"></a>Part 10 Alias Template (template typdef)</h2><pre class="line-numbers language-c++"><code class="language-c++">template <typename T>
+using Vec = std::vector<T, MyAlloc<T>>;  // standard vector using own allocator
+Vec<int> coll;
+// [等价于]  <==> 
+std::vector<int, MyAlloc<int>> coll;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="难道-using-只是为了少打几个字母？"><a href="#难道-using-只是为了少打几个字母？" class="headerlink" title="难道 using 只是为了少打几个字母？"></a>难道 using 只是为了少打几个字母？</h3><pre class="line-numbers language-c++"><code class="language-c++">template <typename Container, typename T>
+void func(Container cnt, T elem)
+&#123;
+    Container<T> c;
+
+    //  ...
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="Part-11-template-template-parameter"><a href="#Part-11-template-template-parameter" class="headerlink" title="Part 11 template template parameter"></a>Part 11 template template parameter</h2><pre class="line-numbers language-c++"><code class="language-c++">template <typename T, template <typename> class Container >  // 注意这里！！
+class Func
+&#123;
+private:
+    Container<T> c &#123; T() &#125;;
+
+public:
+    Func()
+    &#123;  &#125;
+    // ..
+&#125;;
+
+//--------
+
+func(vector<string>());
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">error: type/value mismatch at argument 2 in template parameter list for 'template<class T, template<class> class Container> class Func'
+expected a template of type 'template<class> class Container', got 'template<class _Tp, class _Alloc> class std::vector'
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+<p>根据编译错误提示，可知问题在 std::vector，与单参数<T>期望不否。<br>可是 vector 第二个模板参数有指定默认值，那为什么还会报错呢？是因为，当作为模板模板参数进行传递时，编译器无法再完成模板模板参数默认值的推导，即 <code>typename _Alloc = std::allocator&lt;_Tp&gt;</code> 编译器无法推导得出，需要手动指定。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">#include <iostream>
+#include <vector>
+#include <list>
+using namespace std;
+
+const int SIZE = 100;
+template <typename T,
+        template <typename T>
+        class Container
+>
+class XCls
+&#123;
+private:
+    Container<T> c;
+public:
+    XCls()
+    &#123;
+        for(long i=0; i<SIZE; ++i)
+            c.insert(c.end(), T());
+        //output_static_data(T());
+        Container<T> c1(c);
+        Container<T> c2(std::move(c));
+        c1.swap(c2);
+    &#125; 
+&#125;;
+//--------------
+template<typename T>
+using Vec = vector<T, allocator<T>>;
+int main() &#123;
+    //不得在function body之内声明
+    XCls<string, Vec> c1;
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h2 id="Part-12-Type-Alias-noexcept-override-final"><a href="#Part-12-Type-Alias-noexcept-override-final" class="headerlink" title="Part 12 Type Alias noexcept override final"></a>Part 12 Type Alias noexcept override final</h2><h3 id="Type-Alias"><a href="#Type-Alias" class="headerlink" title="Type Alias"></a>Type Alias</h3><p>类型别名声明和typedef声明之间没有区别。 该声明可能出现在块作用域，类作用域或名称空间作用域中。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">// type alias, idential to
+// tyodef void (*func)(int, int);
+// <<==>>
+using func = void(*)(int, int);
+
+// the name 'func' now denote a pointer to function:
+void example(int, int)
+&#123; &#125;
+
+func fn = example;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">// type alias can introduce a member typedef name
+// (类型别名可以引入成员typedef名称)
+template <typename T>
+struct Container
+&#123;
+    using value_type = T; // <==> typedef T value_type;
+&#125;;
+
+// type alias can introduce a member typedef name
+// (类型别名可以引入成员typedef名称)
+template <typename T>
+struct Container
+&#123;
+    using value_type = T; // <==> typedef T value_type;
+&#125;;
+
+//-----
+
+template <typename Cntr>
+void fn2(const Cntr &c)
+&#123;
+    typename Cntr::value_type n;  // 注意这里！！
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">类型别名，用于隐藏模板参数
+template <class CharT>
+using mystring = std::basic_string<CharT, std::char_traits<CharT>>;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>如, <string> 和 &lt;string_fwd.h&gt; 都有以下 typdef :<br><code>typedef basic_string&lt;char&gt; string;</code></p>
+<h3 id="using"><a href="#using" class="headerlink" title="using"></a>using</h3><ol>
+<li><p>名称空间使用指令和名称空间成员使用声明;</p>
+<pre class="line-numbers language-c++"><code class="language-c++">using namespace std;
+using std::count;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
+</li>
+<li><p>类成员的使用声明</p>
+<pre class="line-numbers language-c++"><code class="language-c++"><stl_bvector.h>
+
+protected:
+    using _Base::M_allocate;
+    using _Base::M_deallocate;
+    using _Base::_S_nword;
+    using _Base::M_get_Bit_allocator;
+
+<std_list.h>
+    using _Base::_M_impl;
+    using _Base::_M_put_node;
+    using _Base::_M_get_node;
+    using _Base::_M_get_Tp_allocator;
+    using _Base::_M_get_Node_allocator;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+</li>
+<li><p>type alias and alias template declaration(Since C++11)</p>
+<pre class="line-numbers language-c++"><code class="language-c++">using func = void(*)(int,int);
+<span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
+</li>
+</ol>
+<h3 id="noexcept"><a href="#noexcept" class="headerlink" title="noexcept"></a>noexcept</h3><p>你需要通知C ++（特别是std :: vector）你的move构造函数和析构函数不会抛出。 然后，当向量增长（扩容）时，将调用move构造函数。 如果构造函数不是noexcept，则std :: vector不能使用它，因为那样就不能确保标准要求的保护性保证。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">class MyString
+&#123;
+private:
+    char *_data;
+    size_t _len;
+    // ...
+public:
+    // move construct
+    MyString(MyString &&str) noexcept 
+        : _data(str._data), _len(str._len)
+    &#123; &#125;
+    // move assignment
+    MyString &operator=(MyString &&str) noexcept
+    &#123;        
+        // ...
+        return *this;
+    &#125;
+&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="override"><a href="#override" class="headerlink" title="override"></a>override</h3><p>在成员函数声明或定义中，<code>override</code>确保该函数为虚函数并覆盖某个基类中的虚函数。若此非真则程序生成编译错误。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">struct Base
+&#123;
+    virtual void vfunc(float)
+    &#123; &#125;
+&#125;;
+
+struct Derived1 : public Base
+&#123;
+    // 当打算覆盖基类函数时意外地创建了一个新的虚函数。这是一个普遍的问题，尤其是当用户去修改基类时
+    virtual void vfunc(int)  // error: ‘virtual void Derived::vfunc(int)’ marked ‘override’, but does not override
+    &#123; &#125; 
+&#125;;
+
+struct Derived : public Base
+&#123;
+    // 覆盖意味着编译器将检查基类，以查看是否存在具有此确切签名的虚函数。 如果没有，编译器将指示错误。
+    virtual void vfunc(int) override  // error: ‘virtual void Derived::vfunc(int)’ marked ‘override’, but does not override
+    &#123; &#125;  
+
+    virtual void vfunc(float) override  // OK
+    &#123; &#125;
+&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="final"><a href="#final" class="headerlink" title="final"></a>final</h3><p>当在虚函数声明或定义中使用时，<code>final</code>确保函数为虚并指定其不可被派生类覆盖。否则生成编译时错误。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">struct Base final
+&#123; &#125;;
+
+struct Derived : Base  // error: cannot derive from ‘final’ base ‘Base’ in derived type ‘Derived’
+&#123; &#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>当在类定义中使用时，<code>final</code>指定此类不可在另一类的定义中的基类说明符列表中出现（换言之，不能派生于它）。否则生成编译时错误。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">struct Base
+&#123;
+    virtual void f() final;  // error: virtual function ‘virtual void Derived::f()’void f();
+&#125;;
+
+struct Derived : public Base
+&#123;
+    void f();  // error: virtual function ‘virtual void Derived::f()’ void f();
+
+&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<h3 id="Part-13-Lambdas"><a href="#Part-13-Lambdas" class="headerlink" title="Part 13 Lambdas"></a>Part 13 Lambdas</h3><p>C ++引入了lambda，允许定义内联功能，这些功能可用作参数或本地对象。 lambdas更改了C ++标准库的使用方式。</p>
+<p>Lambda是功能的定义,可以在内部语句和表达式中定义。因此，你可以将lambda用作内联函数。 最小lambda函数没有参数，并且简单地完成一些操作。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">[] &#123; 
+    std::cout << "hello lambda" << srd::endl;
+&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+<p>[capture list](params list) mutable<code>opt</code> throwSpec<code>opt</code> -&gt;retType<code>opt</code> {function body}</p>
+<ul>
+<li>capture list：捕获外部变量列表</li>
+<li>params list：形参列表</li>
+<li>mutable指示符：用来说明是否可以修改捕获的变量</li>
+<li>exception：异常说明</li>
+<li>return type：返回类型</li>
+<li>function body：函数体</li>
+</ul>
+<p>捕获以访问lambda内部的非静态外部对象。 可以使用诸如std :: cout之类的静态对象。您可以指定捕获以访问未作为参数传递的外部范围数据。</p>
+<table>
+<thead>
+<tr>
+<th>[ ]</th>
+<th>不捕获任何外部变量</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>[变量名, …]</td>
+<td>默认以值得形式捕获指定的多个外部变量（用逗号分隔），如果引用捕获，需要显示声明（使用&amp;说明符）</td>
+</tr>
+<tr>
+<td>[this]</td>
+<td>以值的形式捕获this指针</td>
+</tr>
+<tr>
+<td>[=]</td>
+<td>以值的形式捕获所有外部变量</td>
+</tr>
+<tr>
+<td>[&amp;]</td>
+<td>以引用形式捕获所有外部变量</td>
+</tr>
+<tr>
+<td>[=, &amp;x]</td>
+<td>变量x以引用形式捕获，其余变量以传值形式捕获</td>
+</tr>
+<tr>
+<td>[&amp;, x]</td>
+<td>变量x以值的形式捕获，其余变量以引用形式捕获</td>
+</tr>
+</tbody></table>
+<h3 id="mutable"><a href="#mutable" class="headerlink" title="mutable"></a>mutable</h3><p>对象按值传递，但是在lambda定义的函数对象内部，你可以对传递的值进行写访问。</p>
+<h3 id="throwSpec"><a href="#throwSpec" class="headerlink" title="throwSpec"></a>throwSpec</h3><p>提供异常说明</p>
+<h3 id="retType"><a href="#retType" class="headerlink" title="retType"></a>retType</h3><p>在没有对返回类型进行任何特定定义的情况下，将从返回值中推导出来。</p>
+<p><strong>匿名函数对象</strong></p>
+<pre class="line-numbers language-c++"><code class="language-c++">// objects are passed by value, but inside the function object defined by the lambda, 
+// you have write access to the passed value.
+void func1()
+&#123;
+    int id = 0;
+    auto f = [id] () mutable &#123;
+        cout << id << " ";
+        id++;
+    &#125;;
+
+    id = 42;
+
+    f();
+    f();
+    f();
+
+    cout << id << endl;  // print : 0 1 2 42: 
+&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">void func2()
+&#123;
+    int id = 0;
+    auto f = [&id] () &#123;
+        cout << "id: " << id << endl;
+        id++;
+    &#125;;
+
+    id = 42;
+
+    f();
+    f();
+    f();
+
+    cout << id << endl;  // print : 42 43 44 45
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">void func3()
+&#123;
+    int id = 0;
+    auto f = [id] () &#123;
+        cout << "id: " << id << endl;
+        id++;  // error: increment of read-only variable ‘id’
+    &#125;;
+
+    id = 42;
+
+    f();
+    f();
+    f();
+
+    cout << id << endl;
+&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">void func4()
+&#123;
+    int id = 0;
+    auto f = [id]   () mutable &#123;
+        cout << "id: " << id << endl;
+        id++;
+
+        static int x = 5;  // 可以声明变量
+        int y = 6;         // 可以声明返回值
+        return id;
+    &#125;;
+    
+    f();
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>当我们编写一个 lambda后， 编译器将该表达时翻译成一个未命名的未命名对象。再 lambda 表达时产生的类中含有一个重载的函数调用运算符。默认情况下 lambda 不能改变它捕获的变量。因此在默认情况下，由 lambda 产生的类当中的函数调用运算符是一个 const 成员函数。如果 lambda 被声明为 mutable， 则调用运算符就不是 const 的了。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">int tobefound = 5;
+auto lambda1 = [tobefound] (int val) &#123;return val == tobefound;&#125;;
+
+class UnNameLocalFunction
+&#123;
+    int locaVal;
+public:   
+    UnNameLocalFunction(int var) : locaVal(var) 
+    &#123; &#125;
+
+    bool operator () (int val) const
+    &#123;
+        return val = locaVal;
+    &#125;
+&#125;;
+
+UnNameLocalFunction lambda2(tobefound);
+
+bool b1 = lambda1(5);
+bool b2 = lambda2(5);
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>Lambda的类型是一个匿名函数对象，对于每个Lambda表达式都是唯一的。 因此，要声明该类型的对象，您需要templates或auto。 如果需要该类型，则可以使用decltype(), 例如，需要将lambda作为散列函数传递，或者将排序或排序规则传递给关联的或无序的容器;</p>
+<pre class="line-numbers language-c++"><code class="language-c++">auto cmp = [] (const Person &p1, const Person &p2)
+                        &#123;
+                            return p1.lastname() < p2.lastname()
+                               || (p1.lastname() == p2.lastname() 
+                                  && p1.firstname() < p2.lastname());
+
+                        &#125;;
+
+std::set<Person, decltype(cmp)> coll(cmp);
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">//set实现
+template <class Key,
+          class Compare = less<Key>,
+          class Alloc = alloc>
+class set
+&#123;
+public:
+    // typedes:
+    ...
+    typedef Compare key_compare;
+    typedef Compare value_compare;
+
+private:
+    typedef rb_tree<key_type, value_type,
+                    identity<value_type>,
+                    key_compare, Alloc> rep_type;
+
+    rep_type t; // red-black tree representing set
+
+public:
+    ...
+    set() : t(Compare()) &#123;&#125;
+    explicit set(const Compare &comp) : t(comp) &#123;&#125;
+&#125;;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<p>（函数对象是一种非常强大的方法，可自定义标准模板库（STL）算法的行为，并且可以封装代码和数据（与普通函数不同）。 但是由于需要编写整个类，因此函数对象的定义不方便。 而且，它们没有在您试图使用它们的源代码中定义，并且非本地性使它们更难使用。 库已经尝试减轻一些冗长和非局部性的问题，但是由于语法变得复杂并且编译器错误不是很友好，因此没有提供太多帮助。 使用库中的函数对象的效率也较低，因为定义为数据成员的函数对象不是内联的。）</p>
+<p>Lambda表达式解决了这些问题。 以下代码段显示了一个lambda表达式，该表达式在程序中用于从向量整数中删除变量x和y之间的整数。</p>
+<pre class="line-numbers language-c++"><code class="language-c++">#include <iostream>
+#include <vector>
+#include <algorithm>
+
+using namespace std;
+
+void func1()
+&#123;
+    vector<int> vi &#123;5, 28, 50, 83, 70, 590, 245, 59, 24&#125;;
+    int x = 30;
+    int y = 100;
+
+    vi.erase(remove_if(vi.begin(),
+                        vi.end(),
+                        [x, y](int n) &#123;return x<n && n<y;&#125;
+                        ),
+              vi.end()
+             );
+
+    for (auto i : vi)
+        cout << i << ' ';
+    cout << endl;
+&#125;
+
+void func2()
+&#123;
+    class LambdaFunctor
+    &#123;
+    public:
+        LambdaFunctor(int a, int b) : m_a(a), m_b(b)
+        &#123; &#125;
+
+        bool operator() (int n) const
+        &#123;
+            return m_a < n && n < m_b;
+        &#125;
+
+    private:
+        int m_a;
+        int m_b;
+    &#125;;
+
+    vector<int> vi &#123;5, 28, 50, 83, 70, 590, 245, 59, 24&#125;;
+    int x = 30;
+    int y = 100;
+
+    vi.erase(remove_if(vi.begin(),
+                        vi.end(),
+                        LambdaFunctor(x, y)),
+              vi.end()
+             );
+
+    for (auto i : vi)
+        cout << i << ' ';
+    cout << endl;
+&#125;
+
+int main()
+&#123;
+    func1();
+
+    func2();
+
+    return 0;
+&#125;
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
+<pre class="line-numbers language-c++"><code class="language-c++">//打印结果
+5 28 590 245 24
+5 28 590 245 24
+<span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span></span></code></pre>
+</div><div class="tags"><a href="/tags/C/"><i class="fa fa-tag"></i>C++</a></div><div class="post-nav"><a class="pre" href="/2021/04/15/Nginx%E4%B8%AD%E7%9A%84%E9%94%81%E7%9A%84%E4%BD%BF%E7%94%A8/">Nginx源码概览</a><a class="next" href="/2020/01/25/hello-world/">Hello World</a></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><div class="search-form"><input id="local-search-input" placeholder="Search" type="text" name="q" results="0"/><div id="local-search-result"></div></div></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/C/" style="font-size: 15px;">C</a> <a href="/tags/article/" style="font-size: 15px;">article</a> <a href="/tags/C/" style="font-size: 15px;">C++</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2021/04/15/Nginx%E4%B8%AD%E7%9A%84%E9%94%81%E7%9A%84%E4%BD%BF%E7%94%A8/">Nginx源码概览</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/04/25/C++2.0%E6%96%B0%E7%89%B9%E6%80%A7_%E8%AF%AD%E8%A8%80%E7%AF%87_1/">C++2.0新特性_语言篇_1</a></li><li class="post-list-item"><a class="post-list-link" href="/2020/01/25/hello-world/">Hello World</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="http://www.example1.com/" title="site-name1" target="_blank">site-name1</a><ul></ul><a href="http://www.example2.com/" title="site-name2" target="_blank">site-name2</a><ul></ul><a href="http://www.example3.com/" title="site-name3" target="_blank">site-name3</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2021 <a href="/." rel="nofollow">胡少.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a class="show" id="rocket" href="#top"></a><script type="text/javascript" src="/js/totop.js?v=1.0.0" async></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=1.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox/dist/jquery.fancybox.min.css"><link rel="stylesheet" type="text/css" href="/css/search.css?v=1.0.0"><script type="text/javascript" src="/js/search.js?v=1.0.0"></script><script>var search_path = 'search.xml';
+if (search_path.length == 0) {
+   search_path = 'search.xml';
+}
+var path = '/' + search_path;
+searchFunc(path, 'local-search-input', 'local-search-result');
+</script><script type="text/javascript" src="/js/copycode.js" successtext="复制成功!"></script><link rel="stylesheet" type="text/css" href="/css/copycode.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=1.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=1.0.0"></script></div></body></html>
