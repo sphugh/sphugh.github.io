@@ -1,6 +1,5 @@
 <!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description" content="武汉大学12级，就职于南京测勘院交通工程事业部。擅长各项大地测量，编程，深入研究gamit，PCL，slam，TensorFlow，pytorch。此为博客一枚。"><title>Nginx源码概览 | 胡少</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=1.0.0"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/normalize.css/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/pure-min.min.css"><link rel="stylesheet" type="text/css" href="//cdn.jsdelivr.net/npm/purecss/build/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.jsdelivr.net/npm/font-awesome@4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/jquery/dist/jquery.min.js"></script><link rel="icon" mask="" sizes="any" href="/favicon.ico"><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><script type="text/javascript" src="//cdn.jsdelivr.net/npm/clipboard/dist/clipboard.min.js"></script><script type="text/javascript" src="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.js"></script><link rel="stylesheet" href="//cdn.jsdelivr.net/gh/codeseven/toastr/build/toastr.min.css"><meta name="generator" content="Hexo 5.4.0"><link rel="stylesheet" href="/css/prism-tomorrow.css" type="text/css">
-<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Nginx源码概览</h1><a id="logo" href="/.">胡少</a><p class="description">格物致知</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Nginx源码概览</h1><div class="post-meta">2021-04-15</div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81NGINX%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.1.</span> <span class="toc-text">1、NGINX应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81accept%E9%94%81"><span class="toc-number">1.2.</span> <span class="toc-text">2、accept锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81NGINX%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%9A%84%E5%9F%BA%E7%9F%B3"><span class="toc-number">1.3.</span> <span class="toc-text">3、NGINX实现文件操作的基石</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#socket"><span class="toc-number">2.</span> <span class="toc-text">socket</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#reactor%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">reactor模型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#libevent"><span class="toc-number">4.</span> <span class="toc-text">libevent</span></a></li></ol></div></div><div class="post-content"><p>90分钟NGINX锁的使用</p>
-<span id="more"></span>
+<link rel="stylesheet" href="/css/prism-line-numbers.css" type="text/css"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">Nginx源码概览</h1><a id="logo" href="/.">胡少</a><p class="description">格物致知</p></div><div id="nav-menu"><a class="current" href="/."><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div class="pure-g" id="layout"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">Nginx源码概览</h1><div class="post-meta">2021-04-15</div><div class="clear"><div class="toc-article" id="toc"><div class="toc-title">文章目录</div><ol class="toc"><li class="toc-item toc-level-1"><a class="toc-link" href="#%E6%A6%82%E8%BF%B0"><span class="toc-number">1.</span> <span class="toc-text">概述</span></a><ol class="toc-child"><li class="toc-item toc-level-2"><a class="toc-link" href="#1%E3%80%81NGINX%E5%BA%94%E7%94%A8%E5%9C%BA%E6%99%AF"><span class="toc-number">1.1.</span> <span class="toc-text">1、NGINX应用场景</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#2%E3%80%81accept%E9%94%81"><span class="toc-number">1.2.</span> <span class="toc-text">2、accept锁</span></a></li><li class="toc-item toc-level-2"><a class="toc-link" href="#3%E3%80%81NGINX%E5%AE%9E%E7%8E%B0%E6%96%87%E4%BB%B6%E6%93%8D%E4%BD%9C%E7%9A%84%E5%9F%BA%E7%9F%B3"><span class="toc-number">1.3.</span> <span class="toc-text">3、NGINX实现文件操作的基石</span></a></li></ol></li><li class="toc-item toc-level-1"><a class="toc-link" href="#socket"><span class="toc-number">2.</span> <span class="toc-text">socket</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#reactor%E6%A8%A1%E5%9E%8B"><span class="toc-number">3.</span> <span class="toc-text">reactor模型</span></a></li><li class="toc-item toc-level-1"><a class="toc-link" href="#libevent"><span class="toc-number">4.</span> <span class="toc-text">libevent</span></a></li></ol></div></div><div class="post-content"><p>90分钟NGINX锁的使用<br><span id="more"></span></p>
 <h1 id="概述"><a href="#概述" class="headerlink" title="概述"></a>概述</h1><p>1、nginx应用场景：静态web服务、反向代理、正向代理、负载均衡；</p>
 <p>2、nginx实现代理功能的基石：accept锁</p>
 <p>3、nginx实现文件操作的基石：线程池+自旋锁+信号量+互斥锁+条件变量</p>
@@ -33,7 +32,7 @@
 <p>5、cas锁</p>
 <p>连接数少的情况下：</p>
 <p>自旋锁空转CPU一定时间后，如果仍然没有拿到锁的话，通过信号量（NGX_HAVE_POSIX_SEM）让出CPU（sem_wait阻塞让出CPU）</p>
-<pre class="line-numbers language-c++"><code class="language-c++">//信号量
+<pre class="line-numbers language-lang-c++"><code class="language-lang-c++">//信号量
 //多层级高性能缓存设计
 //sem_intit(set *sem,int pshared, unsingned int value); value = 0;
 case  pshared==0多线程
@@ -42,7 +41,7 @@ value //信号量资源数默认为0；
 sem_wait,se_timedwait,sem_trywait-lock a semaphore //讲上面的value减一
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span><span></span><span></span><span></span><span></span><span></span></span></code></pre>
 <p>突然连接数变多的情况：</p>
-<pre class="line-numbers language-c++"><code class="language-c++">sem_post - unlocak a semphore
+<pre class="line-numbers language-lang-c++"><code class="language-lang-c++">sem_post - unlocak a semphore
 value++;
 ngx_shmtx_wakeup(ngx_shmtx_t *mtx)
 ngx_shmtx_unlock(ngx_shmtx_t *mtx)
@@ -52,21 +51,21 @@ if(ngx_use_accept_mutex) 连接数多的情况调用unlock
 <p>任务数少，任务数多的情况，线程池</p>
 <p>信号量？？？不行，初始值是固定的，任务数不行，只能使用条件变量，信号量可以解决的问题条件变量（多线程）都可以处理， 除了多进程。</p>
 <p>通过条件变量去管理线程池，任务数少，休眠，反之则唤醒；</p>
-<h1 id="socket"><a href="#socket" class="headerlink" title="socket"></a>socket</h1><pre class="line-numbers language-c++"><code class="language-c++">int socket(int domain, int type, int protocol);
+<h1 id="socket"><a href="#socket" class="headerlink" title="socket"></a>socket</h1><pre class="line-numbers language-lang-c++"><code class="language-lang-c++">int socket(int domain, int type, int protocol);
 <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <ul>
 <li>domain：即协议域，又称为协议族（family）。常用的协议族有，AF_INET、AF_INET6、AF_LOCAL（或称AF_UNIX，Unix域socket）、AF_ROUTE等等。协议族决定了socket的地址类型，在通信中必须采用对应的地址，如AF_INET决定了要用ipv4地址（32位的）与端口号（16位的）的组合、AF_UNIX决定了要用一个绝对路径名作为地址。</li>
 <li>type：指定socket类型。常用的socket类型有，SOCK_STREAM、SOCK_DGRAM、SOCK_RAW、SOCK_PACKET、SOCK_SEQPACKET等等（socket的类型有哪些？）。</li>
 <li>protocol：故名思意，就是指定协议。常用的协议有，IPPROTO_TCP、IPPTOTO_UDP、IPPROTO_SCTP、IPPROTO_TIPC等，它们分别对应TCP传输协议、UDP传输协议、STCP传输协议、TIPC传输协议（这个协议我将会单独开篇讨论！）。</li>
 </ul>
-<pre class="line-numbers language-c++"><code class="language-c++">int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
+<pre class="line-numbers language-lang-c++"><code class="language-lang-c++">int bind(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <ul>
 <li>sockfd：即socket描述字，它是通过socket()函数创建了，唯一标识一个socket。bind()函数就是将给这个描述字绑定一个名字。</li>
 <li>addr：一个const struct sockaddr *指针，指向要绑定给sockfd的协议地址。这个地址结构根据地址创建socket时的地址协议族的不同而不同.</li>
 <li>addrlen：对应的是地址的长度。</li>
 </ul>
-<pre class="line-numbers language-c++"><code class="language-c++">int listen(int sockfd, int backlog);
+<pre class="line-numbers language-lang-c++"><code class="language-lang-c++">int listen(int sockfd, int backlog);
 int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 <span aria-hidden="true" class="line-numbers-rows"><span></span><span></span></span></code></pre>
 <ul>
@@ -75,7 +74,7 @@ int connect(int sockfd, const struct sockaddr *addr, socklen_t addrlen);
 <li><p>connect函数的第一个参数即为客户端的socket描述字，第二参数为服务器的socket地址，第三个参数为socket地址的长度。客户端通过调用connect函数来建立与TCP服务器的连接。</p>
 </li>
 </ul>
-<pre class="line-numbers language-c++"><code class="language-c++">int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
+<pre class="line-numbers language-lang-c++"><code class="language-lang-c++">int accept(int sockfd, struct sockaddr *addr, socklen_t *addrlen);
 <span aria-hidden="true" class="line-numbers-rows"><span></span></span></code></pre>
 <p>accept函数的第一个参数为服务器的socket描述字，第二个参数为指向struct sockaddr *的指针，用于返回客户端的协议地址，第三个参数为协议地址的长度。如果accpet成功，那么其返回值是由内核自动生成的一个全新的描述字，代表与返回客户的TCP连接。</p>
 <p>注意：accept的第一个参数为服务器的socket描述字，是服务器开始调用socket()函数生成的，称为监听socket描述字；而accept函数返回的是已连接的socket描述字。一个服务器通常通常仅仅只创建一个监听socket描述字，它在该服务器的生命周期内一直存在。内核为每个由服务器进程接受的客户连接创建了一个已连接socket描述字，当服务器完成了对某个客户的服务，相应的已连接socket描述字就被关闭。</p>
